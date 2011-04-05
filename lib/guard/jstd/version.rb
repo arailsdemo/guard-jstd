@@ -1,5 +1,5 @@
 module Guard
-  module Jstd
+  module JstdVersion
     VERSION = "0.0.1"
   end
 end
