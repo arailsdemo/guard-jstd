@@ -5,6 +5,7 @@ module Guard
   class Jstd < Guard
     autoload :Runner, 'guard/jstd/runner'
     autoload :CaseFinder, 'guard/jstd/case_finder'
+    autoload :Formatter, 'guard/jstd/formatter'
 
     def start
       UI.info "Guard::Jstd is running."
