@@ -8,7 +8,8 @@ module Guard
 
         def run(tests="all")
           UI.info("Running #{tests}")
-          `#{java_command} #{tests}`
+          results = `#{java_command} #{tests}`
+          Formatter.notify(results)
         end
       end
     end
