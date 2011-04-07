@@ -8,11 +8,9 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["aRailsDemo"]
   s.email       = ["arailsdemo@gmail.com"]
-  s.homepage    = "arailsdemo.com"
+  s.homepage    = "https://github.com/arailsdemo/guard-jstd"
   s.summary     = %q{A Guard for JsTestDriver}
   s.description = %q{This will watch for changes in your JavaScript project and automatically run JsTestDriver}
-
-  s.rubyforge_project = "guard-jstd"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

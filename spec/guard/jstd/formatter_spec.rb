@@ -85,7 +85,7 @@ describe Guard::Jstd::Formatter do
       subject.notify(failed)
     end
 
-    it "call #display" do
+    it "call #to_terminal" do
       @formatter.should_receive(:to_terminal)
       subject.notify(failed)
     end
