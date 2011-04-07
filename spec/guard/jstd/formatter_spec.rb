@@ -34,6 +34,24 @@ describe Guard::Jstd::Formatter do
       )
       subject.notify
     end
+
+    describe "#colorized_results" do
+      it "adds color to the failed test" do
+        subject.colorize_results.should match /\[31m\s+Sneaky3.test/
+      end
+
+      it "adds color to the failed overview line" do
+        subject.colorize_results.should match /\[31m\s+Chrome/
+      end
+    end
+
+    it "#to_terminal sends colorized results to UI" do
+      subject.stub(:colorize_results) { failed }
+      ::Guard::UI.should_receive(:info).with(
+        failed, {:reset => true}
+      )
+      subject.to_terminal
+    end
   end
 
   context "--all tests passed--" do
@@ -47,6 +65,29 @@ describe Guard::Jstd::Formatter do
         message, { :title => klass::TITLES[:success], :image => :success }
       )
       subject.notify
+    end
+
+    it "#colorized_results adds color to the successful overview line" do
+      subject.colorize_results.should match /\[32m\s+Total/
+    end
+  end
+
+  context ".notify" do
+    subject { klass }
+
+    before do
+      @formatter = double.as_null_object
+      subject.should_receive(:new).with(failed) { @formatter }
+    end
+
+    it "calls #notify" do
+      @formatter.should_receive(:notify)
+      subject.notify(failed)
+    end
+
+    it "call #display" do
+      @formatter.should_receive(:to_terminal)
+      subject.notify(failed)
     end
   end
 end
