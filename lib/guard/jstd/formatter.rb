@@ -39,7 +39,7 @@ module Guard
 
       def colorize_results
        lines.collect do |line|
-          if line =~ /.test failed/
+          if line =~ /failed/
             colorize(line, :failed)
           elsif line =~ /Fails: (\d+);/
             status = $1.to_i == 0 ? :success : :failed
