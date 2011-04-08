@@ -7,12 +7,21 @@ describe Guard::Jstd do
     klass.ancestors.should include Guard::Guard
   end
 
-  it "#start sends a message to UI" do
-    ::Guard::UI.should_receive(:info).with(
-      "Guard::Jstd is running."
-    )
-    subject.start
+  describe "#start" do
+    it "sends a message to UI" do
+      ::Guard::Jstd::Runner.stub(:start_server)
+      ::Guard::UI.should_receive(:info).with(
+        "Guard::Jstd is running."
+      )
+      subject.start
+    end
+
+    it "calls Runner.start_server" do
+      ::Guard::Jstd::Runner.should_receive(:start_server)
+      subject.start
+    end
   end
+
 
   it " #run_all runs all tests" do
     klass::Runner.should_receive(:run)

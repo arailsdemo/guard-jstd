@@ -6,9 +6,11 @@ module Guard
     autoload :Runner, 'guard/jstd/runner'
     autoload :CaseFinder, 'guard/jstd/case_finder'
     autoload :Formatter, 'guard/jstd/formatter'
+    autoload :Configuration, 'guard/jstd/configuration'
 
     def start
       UI.info "Guard::Jstd is running."
+      Runner.start_server
     end
 
     def run_all
