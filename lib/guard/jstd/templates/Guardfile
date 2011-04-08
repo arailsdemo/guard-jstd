@@ -2,3 +2,9 @@ guard "jstd" do
   watch(%r{^javascripts/.+_test\.js})
   watch(%r{^javascripts/src/(.+)\.js}) { |m| "javascripts/test/#{m[1]}_test.js"}
 end
+
+# See the README for configuration options.
+Jstd.configure do |c|
+  c.browser_paths = "\`which open\`"
+  c.capture_browser = true
+end
