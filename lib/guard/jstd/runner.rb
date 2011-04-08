@@ -1,9 +1,14 @@
+require 'Forwardable'
+
 module Guard
   class Jstd
     module Runner
       class << self
-        def java_command
-          "java -jar #{java_path}"
+        extend Forwardable
+
+        [:java_path, :browser_paths, :server_port,
+        :jstd_config_path].each do |config|
+          def_delegator Configuration, config, config
         end
 
         def run(tests="all")
@@ -13,23 +18,20 @@ module Guard
         end
 
         def start_server
-          pid = fork { `java -jar #{java_path} --port #{port} --browser #{browser_paths}` }
-          Process.detach(pid)
-          UI.info "JsTestDriver server started on port #{port}"
+          if Configuration.start_server
+            browser_opt = Configuration.capture_browser ?
+                          " --browser #{browser_paths}" : ""
+            pid = fork {
+              trap('QUIT', 'IGNORE')
+              `#{java_command} --port #{server_port}#{browser_opt}`
+            }
+            Process.detach(pid)
+            UI.info "JsTestDriver server started on port #{server_port}"
+          end
         end
 
-        private
-
-        def java_path
-          Configuration.java_path
-        end
-
-        def browser_paths
-          Configuration.browser_paths
-        end
-
-        def port
-          Configuration.default_server_port
+        def java_command
+          "java -jar #{java_path} --config #{jstd_config_path}"
         end
       end
     end

@@ -9,7 +9,7 @@ describe Guard::Jstd do
 
   describe "#start" do
     it "sends a message to UI" do
-      ::Guard::Jstd::Runner.stub(:start_server)
+      klass::Runner.stub(:start_server)
       ::Guard::UI.should_receive(:info).with(
         "Guard::Jstd is running."
       )
@@ -17,11 +17,10 @@ describe Guard::Jstd do
     end
 
     it "calls Runner.start_server" do
-      ::Guard::Jstd::Runner.should_receive(:start_server)
+      klass::Runner.should_receive(:start_server)
       subject.start
     end
   end
-
 
   it " #run_all runs all tests" do
     klass::Runner.should_receive(:run)
@@ -35,6 +34,12 @@ describe Guard::Jstd do
       klass::CaseFinder.should_receive(:find).with(paths) { cases }
       klass::Runner.should_receive(:run).with(cases)
       subject.run_on_change(paths)
+    end
+  end
+
+  it ".configure yields the Configuration module" do
+    Guard::Jstd.configure do |c|
+      c.should == Guard::Jstd::Configuration
     end
   end
 end

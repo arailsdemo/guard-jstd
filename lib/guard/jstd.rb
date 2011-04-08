@@ -21,5 +21,9 @@ module Guard
       cases = CaseFinder.find(paths)
       Runner.run(cases)
     end
+
+    def self.configure
+      yield Configuration
+    end
   end
 end
