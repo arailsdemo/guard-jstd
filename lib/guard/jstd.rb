@@ -14,7 +14,7 @@ module Guard
     end
 
     def run_all
-      Runner.run
+      Runner.run unless defined? Guard::CoffeeScript
     end
 
     def run_on_change(paths)
