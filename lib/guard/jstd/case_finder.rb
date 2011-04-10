@@ -5,7 +5,7 @@ module Guard
         paths.collect do |path|
           contents = File.read(path)
           contents.scan(/TestCase\s*\(\s*["']([^"']+)/)
-        end.flatten.join(',')
+        end.flatten.uniq.join(',')
       end
     end
   end

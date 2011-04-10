@@ -10,6 +10,7 @@ describe Guard::Jstd::CaseFinder do
 
   def file2
     <<-CASES
+       TestCase('Second'    , {})
        TestCase('Third'    , {})
        TestCase("Fourth", {
          "test": function () {
