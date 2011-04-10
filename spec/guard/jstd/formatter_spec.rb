@@ -1,6 +1,8 @@
 require "spec_helper"
 
 describe Guard::Jstd::Formatter do
+  let(:klass) { ::Guard::Jstd::Formatter }
+
   let(:failed) do
     <<-FAILED
     ..
@@ -11,16 +13,6 @@ describe Guard::Jstd::Formatter do
               at Object.test (http://0.0.0.0:4224/test/javascripts/test/extra_test.js:9:5)
     FAILED
   end
-
-  let(:passed) do
-    <<-PASSED
-    ....
-    Total 4 tests (Passed: 4; Fails: 0; Errors: 0) (4.00 ms)
-      Chrome 10.0.648.204 Mac OS: Run 4 tests (Passed: 4; Fails: 0; Errors 0) (4.00 ms)
-    PASSED
-  end
-
-  let(:klass) { ::Guard::Jstd::Formatter }
 
   context "--failed test--" do
     subject { klass.new(failed) }
@@ -36,12 +28,16 @@ describe Guard::Jstd::Formatter do
     end
 
     describe "#colorized_results" do
-      it "adds color to the failed test" do
+      it "adds color to the failure message" do
         subject.colorize_results.should match /\[31m\s+Sneaky3.test/
       end
 
-      it "adds color to the failed overview line" do
-        subject.colorize_results.should match /\[31m\s+Chrome/
+      it "adds color to the failure tally" do
+        subject.colorize_results.should match /\[31mFails: 1/
+      end
+
+      it "adds color to the passed tally" do
+          subject.colorize_results.should match /\[32mPassed: 1/
       end
     end
 
@@ -55,6 +51,14 @@ describe Guard::Jstd::Formatter do
   end
 
   context "--all tests passed--" do
+    let(:passed) do
+      <<-PASSED
+      ....
+      Total 4 tests (Passed: 4; Fails: 0; Errors: 0) (4.00 ms)
+        Chrome 10.0.648.204 Mac OS: Run 4 tests (Passed: 4; Fails: 0; Errors 0) (4.00 ms)
+      PASSED
+    end
+
     subject { klass.new(passed) }
 
     its(:any_failed?) { should be_false }
@@ -68,7 +72,51 @@ describe Guard::Jstd::Formatter do
     end
 
     it "#colorized_results adds color to the successful overview line" do
-      subject.colorize_results.should match /\[32m\s+Total/
+      colorized = subject.colorize_results
+      colorized.should match /\[32m\s*Total/
+    end
+  end
+
+  context "--errors present--" do
+    context "-Java error-" do
+      let(:java_error) do
+        <<-ERROR
+        java.lang.RuntimeException: Connection error on: sun.net.www.protocol.
+                at com.google.jstestdriver.HttpServer.postJson(HttpServer.java:124)
+        ERROR
+      end
+
+      subject { klass.new(java_error) }
+
+      it "#notify should send :error arguments to Nofitier" do
+        message = "java.lang.RuntimeException: Connection error on: sun.net.www.protocol."
+        ::Guard::Notifier.should_receive(:notify).with(
+          message, { :title => klass::TITLES[:error], :image => :failed }
+        )
+        subject.notify
+      end
+
+      it "#colorized_results adds color to the error description line" do
+        subject.colorize_results.should match /\[31m\s+java.lang./
+      end
+    end
+
+    context "-JavaScript error-" do
+      let(:javascript_error) do
+        <<-ERROR
+
+        Total 0 tests (Passed: 0; Fails: 0; Errors: 0) (0.00 ms)
+          Chrome 10.0.648.204 Mac OS: Run 1 tests (Passed: 0; Fails: 0; Errors 1) (0.00 ms)
+            error loading file: /test/javascripts/test/hello_test.js:33: Uncaught SyntaxError: Unexpected token ;
+        Tests failed: Tests failed. See log for details.
+        ERROR
+      end
+
+      subject { klass.new(javascript_error) }
+
+      it "#colorized_results add color to the summary line" do
+        subject.colorize_results.should match /\[31mErrors 1/
+      end
     end
   end
 

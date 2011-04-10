@@ -22,7 +22,9 @@ Generate the suggested Guardfile with:
 
 See the [Guard](http://github.com/guard/guard) gem README for more information about using Guard.
 
-If you want to use CoffeeScript in your development, add the [guard-coffeescript gem.](https://github.com/guard/guard-coffeescript)
+By default, Guard::Jstd will attempt to start the JsTestDriver server. This is done as a forked process, so when you stop Guard with <tt>Ctrl-C</tt>, the Jstd server will also stop.
+
+<tt>Ctrl-\</tt> or <tt>Ctrl-Z</tt> will run all of your tests.
 
 ## Configuration
 
@@ -53,3 +55,7 @@ The default JsTestDriver configuration file name is 'jsTestDriver.conf'. If you 
 ## JsTestDriver
 
 Information about setting up JsTestDriver on your system can be [found here](http://www.arailsdemo.com/posts/46) or on the JsTestDriver [homepage.](http://code.google.com/p/js-test-driver/)
+
+## Guard::CoffeeScript
+
+If you want to use CoffeeScript in your development, add the [guard-coffeescript gem.](https://github.com/guard/guard-coffeescript) To avoid conflict with Guard::CoffeeScript, <tt>Ctrl-\</tt> is disabled for Guard::Jstd. Use <tt>Ctrl-Z</tt> instead to run all tests.

@@ -4,7 +4,8 @@ module Guard
       TITLES =
         {
           :failed => 'You have failing tests.',
-          :success => "All of your tests passed."
+          :success => "All of your tests passed.",
+          :error => "You had some errors."
         }
 
       COLORS =
@@ -30,21 +31,47 @@ module Guard
         @failed ||= results.match(/failed/)
       end
 
+      def errors_present?
+        lines[0].match(/error/)
+      end
+
       def notify
-        status = any_failed? ? :failed : :success
-        ::Guard::Notifier.notify( lines[1].lstrip,
-          { :title => TITLES[status], :image => status }
+        if errors_present?
+          status = :error
+          image = { :image => :failed }
+          message = lines[0]
+        else
+          status = any_failed? ? :failed : :success
+          image = { :image => status }
+          message = lines[1]
+        end
+
+        ::Guard::Notifier.notify( message.lstrip,
+          { :title => TITLES[status] }.merge(image)
         )
       end
 
       def colorize_results
        lines.collect do |line|
-          if line =~ /failed/
-            colorize(line, :failed)
-          elsif line =~ /Fails: (\d+);/
-            status = $1.to_i == 0 ? :success : :failed
-            colorize(line, status)
+          if line =~ /failed|error/
+            colorize(line, line, :failed)
           else
+            if line =~ /((Passed: (\d+)); (Fails: (\d+)); (Errors:? (\d+)))/
+              if $5 == "0" && $7 == "0"
+                colorize(line, line, :success)
+              else
+#               if $3 != "0"
+#                 colorize(line, $2, :success)
+#               end
+                [3, 5, 7].each do |tally|
+                  if eval("$#{tally}") != "0"
+                    status = tally == 3 ? :success : :failed
+                    colorize(line, eval("$#{tally - 1}"), status)
+                  end
+                end
+              end
+            end
+
             line
           end
         end.join("\n")
@@ -56,8 +83,8 @@ module Guard
 
       private
 
-      def colorize(text, status)
-        "#{COLORS[status]}#{text}\e[0m"
+      def colorize(text, part, status)
+        text.gsub!(part, "#{COLORS[status]}#{part}\e[0m")
       end
     end
   end
