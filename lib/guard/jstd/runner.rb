@@ -23,6 +23,7 @@ module Guard
                           " --browser #{browser_paths}" : ""
             pid = fork {
               trap('QUIT', 'IGNORE')
+              trap('TSTP', 'IGNORE')
               `#{java_command} --port #{server_port}#{browser_opt}`
             }
             Process.detach(pid)

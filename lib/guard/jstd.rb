@@ -14,7 +14,12 @@ module Guard
     end
 
     def run_all
-      Runner.run unless defined? Guard::CoffeeScript
+      Runner.run unless defined?(::Guard::CoffeeScript) &&
+            ::Guard.guards.any? { |guard| guard.class == ::Guard::CoffeeScript }
+    end
+
+    def reload
+      Runner.run
     end
 
     def run_on_change(paths)

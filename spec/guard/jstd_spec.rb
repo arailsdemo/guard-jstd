@@ -22,10 +22,29 @@ describe Guard::Jstd do
     end
   end
 
-  it " #run_all runs all tests" do
-    klass::Runner.should_receive(:run)
-    subject.run_all
+  describe "#run_all" do
+    it "runs all tests" do
+      klass::Runner.should_receive(:run)
+      subject.run_all
+    end
+
+# TODO remove ::Guard::CoffeeScript when test is done
+    it "does not run tests if Guard::CoffeeScript is present" do
+      ::Guard::CoffeeScript = Class.new
+      Guard.stub(:guards) { [::Guard::CoffeeScript.new, ::Guard::Jstd.new] }
+      klass::Runner.should_not_receive(:run)
+#      Object.send :remove_const, "::Guard::CoffeeScript"
+      subject.run_all
+    end
   end
+
+  describe "#reload" do
+    it "runs all without checking for CoffeeScript" do
+      klass::Runner.should_receive :run
+      subject.reload
+    end
+  end
+
 
   describe "#run_on_change" do
     it "starts the Runner with the corresponding TestCases" do

@@ -106,9 +106,10 @@ describe Guard::Jstd::Runner do
           subject.start_server
         end
 
-        it "traps the 'QUIT' signal before sending it to the child process" do
+        it "traps the 'QUIT' and 'TSTP' signals before sending it to the child process" do
           subject.should_receive("`").with('hooha --port 1234') { 'hooha' }
           subject.should_receive(:trap).with('QUIT', 'IGNORE')
+          subject.should_receive(:trap).with('TSTP', 'IGNORE')
           subject.should_receive(:fork) { |&block| block.call }
           subject.start_server
         end
