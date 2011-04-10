@@ -24,7 +24,7 @@ See the [Guard](http://github.com/guard/guard) gem README for more information a
 
 By default, Guard::Jstd will attempt to start the JsTestDriver server. This is done as a forked process, so when you stop Guard with <tt>Ctrl-C</tt>, the Jstd server will also stop.
 
-<tt>Ctrl-\</tt> or <tt>Ctrl-Z</tt> will run all of your tests.
+<tt>Ctrl-\\</tt> or <tt>Ctrl-Z</tt> will run all of your tests.
 
 ## Configuration
 
@@ -58,4 +58,4 @@ Information about setting up JsTestDriver on your system can be [found here](htt
 
 ## Guard::CoffeeScript
 
-If you want to use CoffeeScript in your development, add the [guard-coffeescript gem.](https://github.com/guard/guard-coffeescript) To avoid conflict with Guard::CoffeeScript, <tt>Ctrl-\</tt> is disabled for Guard::Jstd. Use <tt>Ctrl-Z</tt> instead to run all tests.
+If you want to use CoffeeScript in your development, add the [guard-coffeescript gem.](https://github.com/guard/guard-coffeescript) To avoid conflict with Guard::CoffeeScript, <tt>Ctrl-\\</tt> is disabled for Guard::Jstd. Use <tt>Ctrl-Z</tt> instead to run all tests.
