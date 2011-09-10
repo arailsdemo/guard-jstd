@@ -41,7 +41,7 @@ module Guard
         def default_server_port
           begin
             conf = File.read(jstd_config_path)
-            conf.scan(/server:.*:(\d+)$/).to_s
+            conf.match(/server:.*:(\d+)$/)[1]
           rescue
             '4224'
           end
