@@ -1,4 +1,4 @@
-require 'Forwardable'
+require 'Forwardable' unless defined?(Forwardable)
 
 module Guard
   class Jstd
